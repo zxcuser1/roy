@@ -1,0 +1,46 @@
+<Window
+    x:Class="SwarmLab1.Desktop.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SwarmLab1.Desktop"
+    Width="1180"
+    Height="820"
+    MinWidth="850"
+    MinHeight="600"
+    Title="Лабораторная работа №1 — Децентрализованное управление роем">
+
+    <Grid RowDefinitions="Auto,Auto,*" Margin="16">
+        <StackPanel
+            Grid.Row="0"
+            Orientation="Horizontal"
+            Spacing="8">
+            <Button
+                x:Name="StartPauseButton"
+                Width="110"
+                Content="Старт"
+                Click="StartPauseButton_OnClick" />
+            <Button
+                Width="150"
+                Content="Новая карта"
+                Click="NewEnvironmentButton_OnClick" />
+            <TextBlock
+                x:Name="StatsText"
+                Margin="18,0,0,0"
+                VerticalAlignment="Center" />
+        </StackPanel>
+
+        <TextBlock
+            Grid.Row="1"
+            Margin="0,12,0,10"
+            TextWrapping="Wrap"
+            Text="Круги — агенты; квадрат справа — точка сборки; прямоугольники — препятствия. Тонкие линии показывают недавнюю траекторию каждого агента." />
+
+        <Border
+            Grid.Row="2"
+            BorderBrush="Gray"
+            BorderThickness="1"
+            CornerRadius="4">
+            <local:SimulationView x:Name="SimulationView" />
+        </Border>
+    </Grid>
+</Window>
