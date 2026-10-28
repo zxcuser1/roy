@@ -1,14 +1,14 @@
 # Лабораторная работа №4 — SSA для 2D/3D планирования маршрутов БПЛА
 
-Реализация на **C# / ASP.NET Core (.NET 10)**. Интерфейс открывается в браузере, работает без внешних JS-библиотек и без NuGet-зависимостей. При наличии SDK интернет для сборки проекта не требуется.
+Реализация на **C# / ASP.NET Core (.NET 9)**. Интерфейс открывается в браузере, работает без внешних JS-библиотек и без NuGet-зависимостей. При наличии SDK интернет для сборки проекта не требуется.
 
 ## Запуск
 
-Требуется **.NET SDK 10.x**.
+Требуется **.NET SDK 9.0.100 или новее (9.0.x)**.
 
 ```bash
 # Windows PowerShell, Ubuntu или macOS — из папки проекта
-cd SSA_Lab4_NET10
+cd Lab4
 dotnet restore
 dotnet run
 ```
@@ -17,7 +17,7 @@ dotnet run
 
 Откройте **http://127.0.0.1:5084**. Не закрывайте консоль, пока работает программа. При повторном запуске другой копии возможен конфликт порта 5084.
 
-**Если у вас только .NET SDK 9:** откройте `SSA_Lab4.csproj` и замените `<TargetFramework>net10.0</TargetFramework>` на `net9.0`. В проекте не используются API, уникальные для .NET 10; сборка для .NET 9 предусмотрена на уровне исходников, но не была проверена фактическим компилятором.
+Проект уже настроен для .NET 9 (`<TargetFramework>net9.0</TargetFramework>`). Проверьте установленный SDK командой `dotnet --version`. Фактическая сборка в среде подготовки не проверялась.
 
 ### Автоматическая проверка
 
@@ -40,7 +40,7 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 dotnet publish -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=true
 ```
 
-Папка результата: `bin/Release/net10.0/<RID>/publish/`. Папку `wwwroot` также нужно сохранить рядом с исполняемым файлом. При `--self-contained true` соответствующие runtime packs могут потребовать предварительного скачивания; для исходного запуска достаточно установленного SDK.
+Папка результата: `bin/Release/net9.0/<RID>/publish/`. Папку `wwwroot` также нужно сохранить рядом с исполняемым файлом. При `--self-contained true` соответствующие runtime packs могут потребовать предварительного скачивания; для исходного запуска достаточно установленного SDK.
 
 ## Эксперименты
 
@@ -86,8 +86,8 @@ dotnet publish -c Release -r osx-arm64 --self-contained true -p:PublishSingleFil
 ## Структура исходников
 
 ```text
-SSA_Lab4_NET10/
-├── SSA_Lab4.csproj             # проект ASP.NET Core, .NET 10
+Lab4/
+├── SSA_Lab4.csproj             # проект ASP.NET Core, .NET 9
 ├── Program.cs                  # HTTP API, запуск, --self-test
 ├── Core/
 │   ├── Models.cs               # типы геометрии, параметры, результаты

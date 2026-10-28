@@ -18,7 +18,7 @@
 ## Структура
 
 ```text
-SwarmLab2_NET9/
+Lab2/
 ├── global.json
 ├── SwarmLab2.sln
 ├── SwarmLab2.Core/
@@ -36,7 +36,7 @@ SwarmLab2_NET9/
 
 ## Требования
 
-- .NET SDK 9.0.102 или совместимый .NET 9 SDK.
+- .NET SDK 9.0.100 или более новая версия 9.0.x.
 - Avalonia 11.3.22 загружается через NuGet при `dotnet restore`.
 
 Проверить SDK:
