@@ -27,6 +27,9 @@ public sealed class SwarmEngine
     private const float FollowGain = 1.35f;
     private const float DroneMaxSpeed = 5.4f;
     private const float LeaderSpeed = 3.1f;
+    // У финиша дроны могут удерживаться силами отталкивания немного в стороне
+    // от расчётных позиций. Прибытие не требует математически точного строя.
+    private const float ArrivalTolerance = 1.25f;
     private readonly object _sync = new();
     private Scenario _scenario = null!;
     private PlanResult _astar = null!;
@@ -45,6 +48,11 @@ public sealed class SwarmEngine
     private long _version;
 
     public SwarmEngine() => Reset("urban", "theta");
+
+    public bool HasArrived
+    {
+        get { lock (_sync) return _arrived; }
+    }
 
     public void Reset(string scenario, string planner)
     {
@@ -108,7 +116,7 @@ public sealed class SwarmEngine
         {
             if (!_running || _arrived) return;
             double remaining = Math.Clamp(realDt, 0, 0.15) * _speed;
-            while (remaining > 1e-8)
+            while (remaining > 1e-8 && !_arrived)
             {
                 float dt = (float)Math.Min(remaining, 0.03);
                 Substep(dt);
@@ -136,8 +144,7 @@ public sealed class SwarmEngine
         if (horizontal.LengthSquared() > 1e-5f)
             _heading = Vector3.Normalize(horizontal);
 
-        float clearance = _scenario.World.Clearance(_leader);
-        float compact = Math.Clamp((clearance - 0.4f) / 3.5f, 0.52f, 1f);
+        float compact = FormationScale();
 
         foreach (var drone in _drones)
         {
@@ -189,15 +196,25 @@ public sealed class SwarmEngine
             }
         }
 
-        // БПЛА остаются в строю у финиша, а не исчезают (в отличие от лабораторной № 1).
+        // Проверяем тот же сжатый строй, который задан контроллеру движения.
+        // Требовать исходный масштаб 1f нельзя: рядом с финишной стеной
+        // часть полноразмерного строя физически не помещается.
+        // Для финиша достаточно прибыть в допустимую окрестность позиции;
+        // ожидание почти нулевой скорости приводило к бесконечному зависанию.
         if (_waypoint >= _current.Path.Count && _drones.All(d =>
-            Vector3.Distance(d.Position, DesiredPosition(d.Offset, 1f)) < 0.65f &&
-            d.Velocity.LengthSquared() < 0.1f))
+            Vector3.DistanceSquared(d.Position, DesiredPosition(d.Offset, compact))
+                <= ArrivalTolerance * ArrivalTolerance))
         {
             _arrived = true;
             _running = false;
+            _leaderVelocity = Vector3.Zero;
+            foreach (var drone in _drones)
+                drone.Velocity = Vector3.Zero;
         }
     }
+
+    private float FormationScale() =>
+        Math.Clamp((_scenario.World.Clearance(_leader) - 0.4f) / 3.5f, 0.52f, 1f);
 
     private bool CanMove(Drone drone, Vector3 candidate)
     {
@@ -293,8 +310,7 @@ public sealed class SwarmEngine
                     id = d.Id,
                     position = Vec3.From(d.Position),
                     velocity = Vec3.From(d.Velocity),
-                    target = Vec3.From(DesiredPosition(d.Offset,
-                        Math.Clamp((_scenario.World.Clearance(_leader) - 0.4f) / 3.5f, 0.52f, 1f))),
+                    target = Vec3.From(DesiredPosition(d.Offset, FormationScale())),
                     distance = Math.Round(d.Distance, 2),
                     blockedSteps = d.Blocked,
                     trail = d.Trail.Select(Vec3.From).ToArray()

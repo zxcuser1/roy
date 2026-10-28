@@ -39,6 +39,25 @@ public static class SelfTests
                 "без пересечений препятствий и дронов");
             if (!safe) errors++;
         }
+        // Регрессия: в узком коридоре финишный строй сжимается рядом со стеной.
+        // Раньше дроны доходили до цели, но arrived оставался false.
+        foreach (var planner in new[] { "theta", "astar" })
+        {
+            var engine = new SwarmEngine();
+            engine.Reset("corridor", planner);
+            bool safe = engine.IsSafe();
+            const int maxSteps = 3200; // 160 секунд модельного времени
+            for (int i = 0; i < maxSteps && safe && !engine.HasArrived; i++)
+            {
+                engine.Step(0.05);
+                safe = engine.IsSafe();
+            }
+            bool passed = safe && engine.HasArrived;
+            Console.WriteLine($"[{(passed ? "OK" : "ERROR")}] corridor/{planner}: " +
+                $"финиш достигнут, безопасность сохранена: {passed}");
+            if (!passed) errors++;
+        }
+
         Console.WriteLine(errors == 0 ? "ALL TESTS PASSED" : $"FAILED: {errors}");
         return errors == 0 ? 0 : 1;
     }
