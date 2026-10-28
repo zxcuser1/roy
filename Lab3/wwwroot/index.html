@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Роевой интеллект · Лабораторная № 3</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <header class="brand">
+        <div class="brand-mark">S<span>3</span></div>
+        <div><p class="eyebrow">МОДЕЛИРОВАНИЕ РОЯ</p><h1>Потенциальные поля</h1><p class="subtitle">Лабораторная работа № 3</p></div>
+      </header>
+
+      <section class="panel">
+        <h2>Симуляция <span id="status" class="status">ЗАГРУЗКА</span></h2>
+        <label for="scenario">Среда моделирования</label>
+        <select id="scenario">
+          <option value="urban">Городские препятствия</option>
+          <option value="corridor">Узкий коридор</option>
+          <option value="open">Открытая площадка</option>
+        </select>
+        <label for="planner">Алгоритм построения маршрута</label>
+        <select id="planner">
+          <option value="theta">Theta*–APF (основной)</option>
+          <option value="astar">A* (для сравнения)</option>
+        </select>
+        <div class="buttons">
+          <button id="play" class="button primary">Ⅱ Пауза</button>
+          <button id="reset" class="button secondary">↺ Заново</button>
+        </div>
+        <div class="speed-heading"><label for="speed">Скорость моделирования</label><output id="speedVal">1.0×</output></div>
+        <input id="speed" type="range" min="0.25" max="4" step="0.25" value="1" />
+      </section>
+
+      <section class="panel stats">
+        <h2>Показатели полёта</h2>
+        <div class="stat-grid">
+          <div class="stat"><span>Время полёта</span><strong id="time">0.0 <small>с</small></strong></div>
+          <div class="stat"><span>До цели</span><strong id="remaining">— <small>м</small></strong></div>
+          <div class="stat"><span>Дронов</span><strong id="dronesCount">5 <small>шт.</small></strong></div>
+          <div class="stat"><span>Точек пути</span><strong id="waypoints">—</strong></div>
+        </div>
+        <p class="metric-hint" id="flightStatus">Ожидание состояния симуляции</p>
+      </section>
+
+      <section class="panel compare">
+        <h2>Сравнение планировщиков</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Метрика</th><th>A*</th><th>Theta*–APF</th></tr></thead>
+          <tbody>
+            <tr><td>Длина, м</td><td id="aLen">—</td><td id="tLen">—</td></tr>
+            <tr><td>Повороты</td><td id="aTurns">—</td><td id="tTurns">—</td></tr>
+            <tr><td>Узлы поиска</td><td id="aNodes">—</td><td id="tNodes">—</td></tr>
+            <tr><td>Поиск, мс</td><td id="aMs">—</td><td id="tMs">—</td></tr>
+          </tbody>
+        </table></div>
+        <p class="metric-hint">Одинаковые начальная точка, цель и карта. Время зависит от компьютера.</p>
+      </section>
+
+      <section class="panel options">
+        <h2>Отображение</h2>
+        <label class="check"><input type="checkbox" id="showPaths" checked /><span>Показать оба маршрута</span></label>
+        <label class="check"><input type="checkbox" id="showTrails" checked /><span>Следы дронов</span></label>
+        <label class="check"><input type="checkbox" id="showField" /><span>Потенциальное поле (срез Z = 1 м)</span></label>
+        <button class="button full secondary" id="topview">⊞ Вид сверху</button>
+      </section>
+      <footer class="sidebar-footer">C# / .NET 9 · 3D Theta* / APF · 5 БПЛА</footer>
+    </aside>
+
+    <main class="viewport">
+      <div class="scene-title"><span class="live-dot"></span><span>3D СЦЕНА</span><strong id="scenarioLabel">Городские препятствия</strong></div>
+      <canvas id="scene" aria-label="Трёхмерная сцена полёта пяти дронов"></canvas>
+      <div class="legend">
+        <span><i style="background:#52e0d4"></i> Theta*–APF</span>
+        <span><i style="background:#e7a26c"></i> A*</span>
+        <span><i style="background:#becfe3"></i> Препятствия</span>
+        <span><i style="background:#f7dc87"></i> Виртуальный лидер</span>
+      </div>
+      <div class="scene-hint">ЛКМ + движение — вращать · Колесо — масштаб · Пробел — пауза</div>
+      <div class="altitude">X/Y — горизонтальная плоскость<br>Z — высота (0–12 м)</div>
+      <div class="loading" id="loading">Загрузка модели…</div>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

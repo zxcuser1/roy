@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwarmLab2.Core", "SwarmLab2.Core\SwarmLab2.Core.csproj", "{4F597E12-1D4A-4DD7-A45D-AE77D1685D13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwarmLab2.Desktop", "SwarmLab2.Desktop\SwarmLab2.Desktop.csproj", "{AA7CF4A6-DC2B-47B3-8AB7-29316431D7D4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F597E12-1D4A-4DD7-A45D-AE77D1685D13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F597E12-1D4A-4DD7-A45D-AE77D1685D13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F597E12-1D4A-4DD7-A45D-AE77D1685D13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F597E12-1D4A-4DD7-A45D-AE77D1685D13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA7CF4A6-DC2B-47B3-8AB7-29316431D7D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA7CF4A6-DC2B-47B3-8AB7-29316431D7D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA7CF4A6-DC2B-47B3-8AB7-29316431D7D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA7CF4A6-DC2B-47B3-8AB7-29316431D7D4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
