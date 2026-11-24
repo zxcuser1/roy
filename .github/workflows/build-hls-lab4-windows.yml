@@ -22,7 +22,7 @@ jobs:
         with:
           msystem: UCRT64
           update: false
-          install: mingw-w64-ucrt-x86_64-gcc
+          install: mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-libgomp
       - name: Build native standalone x64 exe files
         shell: msys2 {0}
         run: |
