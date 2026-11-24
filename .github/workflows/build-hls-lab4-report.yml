@@ -1,0 +1,52 @@
+name: Build Vitis HLS Lab4 software report
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Vitis_HLS/lab4_z0/report/*.md'
+      - 'Vitis_HLS/lab4_z0/report/*.csv'
+      - 'Vitis_HLS/lab4_z0/report/*.py'
+      - '.github/workflows/build-hls-lab4-report.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install document tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y pandoc
+          python -m pip install matplotlib python-docx
+      - name: Render charts and DOCX
+        working-directory: Vitis_HLS/lab4_z0/report
+        run: |
+          python build_charts.py
+          pandoc 'Программная_часть_lab4_z0.md' -f markdown+tex_math_dollars+raw_tex -o 'Программная_часть_lab4_z0.docx' --resource-path='.:assets' --metadata=lang:ru-RU
+          python postprocess_docx.py
+      - name: Attach report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab4_z0_software_report
+          path: |
+            Vitis_HLS/lab4_z0/report/Программная_часть_lab4_z0.docx
+            Vitis_HLS/lab4_z0/report/assets/*.png
+      - name: Commit report with charts
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Vitis_HLS/lab4_z0/report/assets/*.png
+          git add -f 'Vitis_HLS/lab4_z0/report/Программная_часть_lab4_z0.docx'
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: generated lab4 software report and charts [skip ci]"
+            git push origin HEAD:main
+          fi
