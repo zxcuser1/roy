@@ -1,0 +1,53 @@
+name: Build HLS Lab4 Windows executables
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Vitis_HLS/lab4_z0/src/**'
+      - 'Vitis_HLS/lab4_z0/README.md'
+      - 'Vitis_HLS/lab4_z0/run_all.bat'
+      - '.github/workflows/build-hls-lab4-windows.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: false
+          install: mingw-w64-ucrt-x86_64-gcc
+      - name: Build native standalone x64 exe files
+        shell: msys2 {0}
+        run: |
+          cd Vitis_HLS/lab4_z0
+          mkdir -p bin
+          g++ -O2 -std=c++17 -Wall -Wextra -static -static-libgcc -static-libstdc++ src/lab4_z0.cpp src/lab4_z0_tb.cpp -o bin/lab4_z0_single.exe
+          g++ -O2 -std=c++17 -Wall -Wextra -static -static-libgcc -static-libstdc++ -fopenmp -DUSE_OPENMP src/lab4_z0.cpp src/lab4_z0_tb.cpp -o bin/lab4_z0_openmp.exe
+      - name: Test both EXEs on Windows
+        shell: msys2 {0}
+        run: |
+          cd Vitis_HLS/lab4_z0
+          ./bin/lab4_z0_single.exe 8192 --no-pause
+          ./bin/lab4_z0_openmp.exe 8192 --no-pause
+      - name: Upload binaries as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab4_z0_windows_x64
+          path: Vitis_HLS/lab4_z0/bin/*.exe
+      - name: Commit built EXEs to repository
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f Vitis_HLS/lab4_z0/bin/lab4_z0_single.exe Vitis_HLS/lab4_z0/bin/lab4_z0_openmp.exe
+          if ! git diff --cached --quiet; then
+            git commit -m "build: Windows x64 executables for HLS lab4 [skip ci]"
+            git push origin HEAD:main
+          fi
